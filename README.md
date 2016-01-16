@@ -7,7 +7,7 @@ This is released under the MIT License, meaning you are free to include this in 
 
 ## Notes
 
-This is the first version; it only supports andoid at the moment; but iOS should be supportable.
+This is the first version; it only supports andoid at the moment; but iOS should be supportable soon.
 
 Please note The WebWorker environment is a LIMITED JavaScript shell.  It does have AJAX/HTTP(s) ability; but it does NOT have any access to any of the NativeScript api.  It also does not have any access to the Native iOS or Android api's.  It is strictly a JS thread.  In addition at this moment "ImportScripts" has not been implemented.  It should be fairly easy to implement; and if anyone wants to do a pull request to implement this; I'd be happy to add it to the code that gets injected into the environment.
 
@@ -38,7 +38,8 @@ This will have the JSON object that was sent from the worker
 This will have any errors that occured (this may be unreliable; as not all errors can be tracked properly)
 
 ####.onready
-This is NOT a normal webworker event, and you do not have to use it; but it is fired when the webworker environment is ready to go.  
+This is fired when the webworker environment is ready to go.  
+**This is NOT a standard webworker function**
 
 ### Methods
 ####.postMessage(data)
@@ -52,6 +53,10 @@ This terminates the webworker environment; after this is ran; DO NOT attempt to 
 
 ####onmessage(data)
 The function that gets any messages from the NativeScript environment
+
+####onready()
+This function will get called if it exists once the webworker is able to communicate with the NativeScript host.
+**This is NOT a standard webworker function**
 
 ### Methods
 ####postMessage(data)
@@ -73,7 +78,9 @@ Terminates this environment
 ### test.worker.js
 ```js
   onmessage = function(m) {
-    console.log("NativeScript said" + m);
-	postMessage("Hi");
+    console.log("NativeScript said" + m);	
+  };
+  onready = function() {
+    postMessage("Hi");
   };
 ```  

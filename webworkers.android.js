@@ -108,8 +108,7 @@ function WebWorker(js) {
 WebWorker.prototype._setupBridge = function() {
     this._initialized = true;
     // TODO: Add "ImportScripts(script[, script...])
-    var script = "window.self = window; " +
-        "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
+    var script = "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
         "window._WW_receiveMessage = function(d) { setTimeout(function() { _WW_timedMessage(d); },0); }; " +
         "window._WW_timedMessage = function(d) { try { window.onmessage(d); } catch (e) { console.error(e); postMessage({_BRM: 'error', error: e}); } }; " +
         "window.close = function() { postMessage({_BRM: 'close'}); }; " +
