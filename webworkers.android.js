@@ -5,7 +5,7 @@
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 0.0.1                                      Nathan@master-technology.com
+ * Version 0.0.2                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
 
@@ -107,9 +107,13 @@ function WebWorker(js) {
 
 WebWorker.prototype._setupBridge = function() {
     this._initialized = true;
-    var script = "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
-        "window._WW_receiveMessage = function(d) { try { window.onmessage(d); } catch (e) { console.error(e); postMessage({_BRM: 'error', error: e}); } }; " +
-        "window.close = function() { postMessage({_BRM: 'close'}); }; ";
+    // TODO: Add "ImportScripts(script[, script...])
+    var script = "window.self = window; " +
+        "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
+        "window._WW_receiveMessage = function(d) { setTimeout(function() { _WW_timedMessage(d); },0); }; " +
+        "window._WW_timedMessage = function(d) { try { window.onmessage(d); } catch (e) { console.error(e); postMessage({_BRM: 'error', error: e}); } }; " +
+        "window.close = function() { postMessage({_BRM: 'close'}); }; " +
+        "if (typeof onready === 'function') { onready(); } ";
 
     //noinspection JSUnresolvedFunction
     this.android.evaluateJavascript(script, null);
