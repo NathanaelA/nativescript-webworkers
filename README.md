@@ -1,5 +1,5 @@
 # nativescript-webworkers
- NativeScript WebWorkers (threads) for Android and (soon) iOS
+ NativeScript WebWorkers (threads) for Android and iOS
 
 ## License
 

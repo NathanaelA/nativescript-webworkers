@@ -42,6 +42,9 @@ var _WebViewClient = android.webkit.WebViewClient.extend({
 });
 
 
+// TODO: Determine if we need to pause these threads in the future using something like what is documented
+// here: http://stackoverflow.com/questions/2040963/webview-threads-never-stop-webviewcorethread-cookiesyncmanager-http0-3
+
 function WebWorker(js) {
     this._running = true;
     this._initialized = false;
