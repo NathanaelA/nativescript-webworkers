@@ -7,8 +7,6 @@ This is released under the MIT License, meaning you are free to include this in 
 
 ## Notes
 
-This is the first version; it only supports andoid at the moment; but iOS should be supportable soon.
-
 Please note The WebWorker environment is a LIMITED JavaScript shell.  It does have AJAX/HTTP(s) ability; but it does NOT have any access to any of the NativeScript api.  It also does not have any access to the Native iOS or Android api's.  It is strictly a JS thread.  In addition at this moment "ImportScripts" has not been implemented.  It should be fairly easy to implement; and if anyone wants to do a pull request to implement this; I'd be happy to add it to the code that gets injected into the environment.
 
 If the device has more than one CPU; the Worker threads should not impact the main NativeScript thread.  However, if the device only has one CPU; and depending on how busy you make the worker, it will impact the primary NativeScript thread.

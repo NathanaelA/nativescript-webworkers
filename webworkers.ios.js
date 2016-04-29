@@ -187,4 +187,4 @@ if (!global.Worker) {
     global.Worker = WebWorker;
 }
 
-exports = WebWorker;
+module.exports = WebWorker;
