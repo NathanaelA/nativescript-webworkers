@@ -1,9 +1,17 @@
+[![npm](https://img.shields.io/npm/v/nativescript-webworkers.svg)](https://www.npmjs.com/package/nativescript-webworkers)
+[![npm](https://img.shields.io/npm/l/nativescript-webworkers.svg)](https://www.npmjs.com/package/nativescript-webworkers)
+[![npm](https://img.shields.io/npm/dt/nativescript-webworkers.svg?label=npm%20d%2fls)](https://www.npmjs.com/package/nativescript-webworkers)
+
+
 # nativescript-webworkers
  NativeScript WebWorkers (threads) for Android and iOS
 
 ## License
 
 This is released under the MIT License, meaning you are free to include this in any type of program -- However for entities that need a support contract, changes, enhancements and/or a commercial license please contact me (nathan@master-technology.com).
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-brightgreen.svg?style=plastic)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HN8DDMWVGBNQL&lc=US&item_name=Nathanael%20Anderson&item_number=nativescript%2dwebworkers&no_note=1&no_shipping=1&currency_code=USD&bn=PP%2dDonationsBF%3ax%3aNonHosted)
+[![Patreon](https://img.shields.io/badge/Pledge-Patreon-brightgreen.svg?style=plastic)](https://www.patreon.com/NathanaelA)
 
 ## Notes
 

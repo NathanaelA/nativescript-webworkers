@@ -1,6 +1,6 @@
 {
   "name": "nativescript-webworkers",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A WebWorker (thread) NativeScript module for Android and iOS",
   "main": "webworkers.js",
   "nativescript": {
