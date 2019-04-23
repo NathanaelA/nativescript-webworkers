@@ -1,25 +1,26 @@
 /**********************************************************************************
- * (c) 2016, Master Technology
+ * (c) 2016-2019, Master Technology
  * Licensed under the MIT license or contact me for a Support or Commercial License
  *
  * I do contract work in most languages, so let me solve your problems!
  *
  * Any questions please feel free to email me or put a issue up on the github repo
- * Version 0.0.2                                      Nathan@master-technology.com
+ * Version 0.0.3                                      Nathan@master-technology.com
  *********************************************************************************/
 "use strict";
+/* global require */
 
-var application = require('application');
-var fs = require('file-system');
+const application = require('tns-core-modules/application');
+const fs = require('tns-core-modules/file-system');
 
 /* jshint node: true, browser: true, unused: false, undef: true */
 /* global android, com, java, javax, unescape, global, NSObject, NSString, NSLocale */
 
 //noinspection JSUnresolvedVariable,JSUnusedLocalSymbols
-var _WebChromeClient = android.webkit.WebChromeClient.extend({
+const _WebChromeClient = android.webkit.WebChromeClient.extend({
     wrapper: null,
     onJsConfirm: function(webView, url, message, result) {
-        var self = this;
+        const self = this;
         setTimeout(function() {
             self.wrapper._clientMessage(message);
         },0);
@@ -28,10 +29,10 @@ var _WebChromeClient = android.webkit.WebChromeClient.extend({
 });
 
 //noinspection JSUnresolvedVariable,JSUnusedLocalSymbols
-var _WebViewClient = android.webkit.WebViewClient.extend({
+const _WebViewClient = android.webkit.WebViewClient.extend({
    wrapper: null,
     onPageFinished: function(webView, url) {
-        var self = this;
+        const self = this;
         setTimeout(function() {
           self.wrapper._finishedLoading(null);
         },0);
@@ -49,6 +50,7 @@ function WebWorker(js) {
     this._running = true;
     this._initialized = false;
     this._messages = [];
+    this._executes = [];
 
 
     //noinspection JSUnresolvedVariable
@@ -61,10 +63,13 @@ function WebWorker(js) {
     //noinspection JSUnresolvedFunction
     this.android.getSettings().setDomStorageEnabled(true);
     //noinspection JSUnresolvedFunction
+    this.android.getSettings().setDatabaseEnabled(true);
+    //noinspection JSUnresolvedFunction
     this.android.getSettings().setUserAgentString("NativeScript-WebWorker");
-    var WCC = new _WebChromeClient();
+
+    const WCC = new _WebChromeClient();
     WCC.wrapper = this;
-    var WVC = new _WebViewClient();
+    const WVC = new _WebViewClient();
     WVC.wrapper = this;
 
     //noinspection JSUnresolvedFunction
@@ -77,41 +82,58 @@ function WebWorker(js) {
         //noinspection JSUnresolvedFunction
         this.android.loadUrl("about:blank");
         return;
-    }
-    if (js[0] === '/' || (js[1] === '/' && (js[0] === '.' || js[0] === '~'))) {
-        if (js[0] === '~' || js[0] === '.') {
-            // TODO: Check to see if ./ is working properly
-            js = fs.path.join(fs.knownFolders.currentApp().path, js.substr(2));
-        }
-        if (fs.File.exists(js)) {
-            var baseJSUrl = "file://" + js.substring(0, js.lastIndexOf('/') + 1);
-            var fileName = js.substring(baseJSUrl.length-7);
-
-            //noinspection JSUnresolvedFunction
-            this.android.loadDataWithBaseURL(baseJSUrl, "<script type='text/javascript' src='"+fileName+"'></script>", "text/html", "utf-8", null);
-        } else {
-            console.error("WebWorkers: can not find JavaScript file: ", js);
-            //noinspection JSUnresolvedFunction
-            this.android.loadUrl("about:blank");
-        }
+    } else if (js.HTML != null) {
+        const baseDataUrl = "file:///" + fs.knownFolders.currentApp().path + "/";
+        this.android.loadDataWithBaseURL(js.baseURL || baseDataUrl, js.HTML, "text/html", "utf-8", null);
+    } else if (js.script != null) {
+        const baseDataUrl = "file:///" + fs.knownFolders.currentApp().path + "/";
+        this.android.loadDataWithBaseURL(js.baseURL || baseDataUrl, "<script type='text/javascript'>"+js.script+"</script>", "text/html", "utf-8", null);
     } else {
-        // Check for http(s)://
-        if ((js[0] === 'h' || js[0] === 'H') && (js[6] === '/' && (js[5] === '/' || js[7] === '/'))) {
-            //noinspection JSUnresolvedFunction
-            this._android.loadUrl(js);
+        if (js[0] === '/' || (js[1] === '/' && (js[0] === '.' || js[0] === '~'))) {
+            if (js[0] === '~' || js[0] === '.') {
+                // TODO: Check to see if ./ is working properly
+                js = fs.path.join(fs.knownFolders.currentApp().path, js.substr(2));
+            }
+            if (fs.File.exists(js)) {
+                const baseJSUrl = "file://" + js.substring(0, js.lastIndexOf('/') + 1);
+                const fileName = js.substring(baseJSUrl.length - 7);
+
+                //noinspection JSUnresolvedFunction
+                this.android.loadDataWithBaseURL(baseJSUrl, "<script type='text/javascript' src='" + fileName + "'></script>", "text/html", "utf-8", null);
+            } else {
+                console.error("WebWorkers: can not find JavaScript file: ", js);
+                //noinspection JSUnresolvedFunction
+                this.android.loadUrl("about:blank");
+            }
         } else {
-            var baseDataUrl = "file:///" + fs.knownFolders.currentApp().path + "/";
-            //noinspection JSUnresolvedFunction
-            this._android.loadDataWithBaseURL(baseDataUrl, "<script type='text/javascript'>"+js+"</script>", "text/html", "utf-8", null);
+            // Check for http(s)://
+            if ((js[0] === 'h' || js[0] === 'H') && (js[6] === '/' && (js[5] === '/' || js[7] === '/'))) {
+                //noinspection JSUnresolvedFunction
+                this.android.loadUrl(js);
+            } else {
+                const baseDataUrl = "file:///" + fs.knownFolders.currentApp().path + "/";
+                //noinspection JSUnresolvedFunction
+                this.android.loadDataWithBaseURL(baseDataUrl, "<script type='text/javascript'>" + js + "</script>", "text/html", "utf-8", null);
+            }
         }
     }
     //this._setupBridge();
 }
 
+WebWorker.prototype.executeJS = function(script) {
+    if (!this._running) { return false; }
+    if (!this._initialized) {
+        this._executes.push(script);
+        return true;
+    }
+    this.android.evaluateJavascript(script, null);
+    return true;
+};
+
 WebWorker.prototype._setupBridge = function() {
     this._initialized = true;
     // TODO: Add "ImportScripts(script[, script...])
-    var script = "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
+    const script = "window.postMessage = function(data) { try { confirm(JSON.stringify(data)); } catch (e) { console.error(e); } }; " +
         "window._WW_receiveMessage = function(d) { setTimeout(function() { _WW_timedMessage(d); },0); }; " +
         "window._WW_timedMessage = function(d) { try { window.onmessage(d); } catch (e) { console.error(e); postMessage({_BRM: 'error', error: e}); } }; " +
         "window.close = function() { postMessage({_BRM: 'close'}); }; " +
@@ -122,7 +144,7 @@ WebWorker.prototype._setupBridge = function() {
 };
 
 WebWorker.prototype._clientMessage = function(m) {
-    var data;
+    let data;
     if (m[0] === '{') {
         try {
             data = JSON.parse(m);
@@ -153,10 +175,17 @@ WebWorker.prototype._finishedLoading = function(err) {
     this._setupBridge();
     if (this._messages.length) {
         while (this._messages.length) {
-            var m = this._messages.pop();
+            let m = this._messages.pop();
             this.postMessage(m);
         }
     }
+    if (this._executes.length) {
+        while (this._executes.length) {
+            const m = this._executes.pop();
+            this.executeJS(m);
+        }
+    }
+
     if (err) {
         onerror(err);
     }
@@ -195,8 +224,11 @@ WebWorker.prototype.onready = function() {
   // Do nothing; this allows the end user to override this
 };
 
-if (!global.Worker) {
+/* if (!global.Worker) {
     global.Worker = WebWorker;
-}
+} */
+
+// Make TS Compatible;
+WebWorker.WebWorker = WebWorker;
 
 module.exports = WebWorker;

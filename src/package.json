@@ -1,6 +1,6 @@
 {
   "name": "nativescript-webworkers",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "A WebWorker (thread) NativeScript module for Android and iOS",
   "main": "webworkers.js",
   "nativescript": {
@@ -14,7 +14,7 @@
     "url": "https://github.com/nathanaela/nativescript-webworkers.git"
   },
   "keywords": [
-    "NativeScript", "webworkers", "worker", "thread", "threads", "iOS", "Android", "JavaScript"
+    "NativeScript", "webworkers", "worker", "thread", "threads", "iOS", "Android", "JavaScript", "WebView"
   ],
   "author": {
     "name": "Nathanael Anderson",
